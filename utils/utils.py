@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import PIL
 from PIL import Image
-from skimage.measure import compare_psnr
+from skimage.metrics import peak_signal_noise_ratio
 from utils.data import Data
 
 
@@ -58,8 +58,8 @@ def compare_PSNR(org, est, on_y=False, gray_scale=False):
     if on_y:
         return compare_psnr_y(np_to_pil(org), np_to_pil(est))
     if gray_scale:
-        return compare_psnr(np.mean(org, axis=0), np.mean(est, axis=0))
-    return compare_psnr(org, est)
+        return peak_signal_noise_ratio(np.mean(org, axis=0), np.mean(est, axis=0))
+    return peak_signal_noise_ratio(org, est)
 
 
 def load_and_compare_psnr(fclean, fnoisy, crop_factor=1, on_y=False, eng=None):
@@ -80,7 +80,7 @@ def get_p_signal(im):
 
 
 def compare_SNR(im_true, im_test):
-    return compare_psnr(im_true, im_test, 1) + get_p_signal(im_true)
+    return peak_signal_noise_ratio(im_true, im_test, 1) + get_p_signal(im_true)
 
 
 def rgb2ycbcr(img):
@@ -114,7 +114,7 @@ def rgb2gray(img):
 
 
 def compare_psnr_y(org_pil, est_pil):
-    return compare_psnr(rgb2ycbcr(org_pil), rgb2ycbcr(est_pil))
+    return peak_signal_noise_ratio(rgb2ycbcr(org_pil), rgb2ycbcr(est_pil))
 
 
 # - transformation functions pil <-> numpy <-> torch
